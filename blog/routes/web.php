@@ -16,6 +16,4 @@ Route::get('/', function () {
 });
 
 
-Route::get('/register', function () {
-    return view('welcome');
-});
+Route::get('/active','Api\LoginController@active');

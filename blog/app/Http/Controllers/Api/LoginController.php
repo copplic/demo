@@ -115,6 +115,14 @@ class LoginController extends ApiController
      * 激活帐号
      */
     function active(Request $request){
+        echo '激活成功！快去登录吧';
+    }
 
+    /*
+     * 获取所有用户的接口
+     */
+    function getUsers(){
+        $users = User::all();
+        return  response()->json($users);
     }
 }

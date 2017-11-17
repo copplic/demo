@@ -31,3 +31,4 @@ Route::group([
 
 Route::post('/login','Api\LoginController@token');
 Route::post('/register','Api\LoginController@register');
+Route::post('/getUsers','Api\LoginController@getUsers');

@@ -27,6 +27,10 @@ Route::group([
     'middleware' => ['auth:api']
 ], function () {
     Route::any('/loginOut','Api\LoginController@logout');
+    Route::any('/addEquipments','Api\LoginController@addEquipments');
+    Route::any('/getUserEquipments','Api\LoginController@getUserEquipments');
+    Route::any('/getEqMeterData','Api\LoginController@getEqMeterData');
+    Route::any('/addData','Api\LoginController@addData');
 });
 
 Route::post('/login','Api\LoginController@token');

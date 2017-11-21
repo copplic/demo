@@ -174,8 +174,20 @@ class LoginController extends ApiController
     /*
      * 获取所有该用户的数据的接口
      */
-    function getEqMeterData(){
-        $users = OpticalPowerMeter::all();
+    function getEqMeterData(Request $request){
+        $pramns = $request->all();
+        $validator = Validator::make($pramns, [
+            'serial_num' => 'required',
+        ]);
+        if ($validator->fails())
+        {
+            $warnings = $validator->messages();
+            $show_warning = $warnings->first();
+            return response()->json(['message' =>$show_warning , 'status_code' => 300, 'data' => null]);
+        }
+        $serial_num = $pramns['serial_num'];
+
+        $users = OpticalPowerMeter::all()->where('serial_num',$serial_num);
         return  response()->json($users);
     }
 

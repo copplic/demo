@@ -125,15 +125,16 @@ class LoginController extends ApiController
      */
     function getUsers(){
         $users = User::all();
-        return  response()->json($users);
+        return  response()->json(['message' => 'success！.', 'status_code' => 200, 'data' => $users]);
     }
 
     /*
      * 获取所有该用户的设备的接口
      */
     function getUserEquipments(){
-        $users = UserEquipments::all();
-        return  response()->json($users);
+        $userEquipments = UserEquipments::all();
+        return  response()->json(['message' => 'success！.', 'status_code' => 200, 'data' => $userEquipments]);
+
     }
 
     /*
@@ -187,8 +188,8 @@ class LoginController extends ApiController
         }
         $serial_num = $pramns['serial_num'];
 
-        $users = OpticalPowerMeter::all()->where('serial_num',$serial_num);
-        return  response()->json($users);
+        $OpticalPowerMeter = OpticalPowerMeter::all()->where('serial_num',$serial_num);
+        return  response()->json(['message' => 'success！.', 'status_code' => 200, 'data' => $OpticalPowerMeter]);
     }
 
     /*

@@ -10,6 +10,7 @@ use App\OpticalPowerMeter;
 use Validator;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
 
 
 class LoginController extends ApiController
@@ -37,6 +38,8 @@ class LoginController extends ApiController
 
         if (!$user) {//&& ($user->status == 0)
             return response()->json(['message' => '账号不存在', 'status_code' => 300, 'data' => null]);
+        }elseif($user->activity!=1){
+            return response()->json(['message' => '账号未激活,请先去邮箱激活', 'status_code' => 300, 'data' => null]);
         }
 
         $http = new Client();
@@ -104,7 +107,9 @@ class LoginController extends ApiController
 //        var_dump($is_registed);exit;
 
         $code = mt_rand(10000,99999);
+        Cache::store('file')->put('code_'.$code, $uid, 10000);
 
+//        var_dump(array($code,$value));
         $data = ['email'=>$email, 'name'=>$name, 'uid'=>$uid, 'activationcode'=>$code];
         Mail::send('activemail', $data, function($message) use($data)
         {
@@ -117,7 +122,17 @@ class LoginController extends ApiController
      * 激活帐号
      */
     function active(Request $request){
-        echo '激活成功！快去登录吧';
+        $pramns = $request->all();
+        $code = $pramns['activationcode'];
+        $uid = $pramns['uid'];
+        $value = Cache::store('file')->get('code_'.$code);
+
+        if($uid == $value){
+            User::where('id',$uid)->update(['activity'=>1]);
+            echo '激活成功！快去登录吧';
+        }else{
+            echo '注册失败!';
+        }
     }
 
     /*

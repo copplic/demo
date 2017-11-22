@@ -96,6 +96,10 @@ class LoginController extends ApiController
         if($is_registed){
             return response()->json(['message' => '这个邮箱已经注册过啦！', 'status_code' => 300, 'data' => null]);
         }
+        $is_registed = User::orWhere('name', "{$name}")->count(); //->orWhere('name', $name)
+        if($is_registed){
+            return response()->json(['message' => '这个用户名已经注册过啦！', 'status_code' => 300, 'data' => null]);
+        }
 
         $user = new User();
         $user->email = $email;

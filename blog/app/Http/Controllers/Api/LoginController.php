@@ -129,7 +129,7 @@ class LoginController extends ApiController
         $pramns = $request->all();
         $code = $pramns['activationcode'];
         $uid = $pramns['uid'];
-        $value = Cache::store('file')->get('code_'.$code);
+        $value = Cache::store('file')->pull('code_'.$code);
 
         if($uid == $value){
             User::where('id',$uid)->update(['activity'=>1]);

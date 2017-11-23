@@ -63,5 +63,5 @@ class ApiController extends Controller
         return ['msg'=>$msg,'code'=>$code];
     }
 
-    public function logout(){}
+    public function logout(Request $request){}
 }

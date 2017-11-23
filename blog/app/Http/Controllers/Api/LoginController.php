@@ -62,8 +62,9 @@ class LoginController extends ApiController
     /**
      * 退出登录
      */
-    public function logout()
+    public function logout(Request $request)
     {
+        return $request->header();
         if (\Auth::guard('api')->check()) {
             \Auth::guard('api')->user()->token()->delete();
         }

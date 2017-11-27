@@ -208,7 +208,7 @@ class LoginController extends ApiController
         }
         $serial_num = $pramns['serial_num'];
 
-        $OpticalPowerMeter = OpticalPowerMeter::all()->where('serial_num',$serial_num);
+        $OpticalPowerMeter = OpticalPowerMeter::where('serial_num',$serial_num)->orderBy('id','desc')->take(100)->get();
         return  response()->json(['message' => 'success！.', 'status_code' => 200, 'data' => $OpticalPowerMeter]);
     }
 
@@ -236,6 +236,11 @@ class LoginController extends ApiController
         $dbm = $pramns['dbm'];
 
         if (\Auth::guard('api')->check()) {
+            $uid = \Auth::guard('api')->user()->id;
+            $is_bind = \App\UserEquipments::where('uid',$uid)->where('serial_num',$serial_num)->count();
+            if(!$is_bind)
+                return response()->json(['message' => '未查询到该设备！', 'status_code' => 300, 'data' => null]);
+
             $uid = \Auth::guard('api')->user()->id;
 //            return ['serial_num'=>$serial_num,'name'=>$name,'wavelength'=>$wavelength,'dbm'=>$dbm,'ref'=>$ref,'mode'=>$mode,'uid'=>$uid];
             \App\OpticalPowerMeter::create(['serial_num'=>$serial_num,'name'=>$name,'wavelength'=>$wavelength,'dbm'=>$dbm,'ref'=>$ref,'mode'=>$mode,'uid'=>$uid]);

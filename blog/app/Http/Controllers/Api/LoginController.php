@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
-use App\User;
-use App\UserEquipments;
-use App\OpticalPowerMeter;
+use App\Models\User;
+use App\Models\UserEquipments;
+use App\Models\OpticalPowerMeter;
 use Validator;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Mail;
@@ -152,9 +152,12 @@ class LoginController extends ApiController
      * 获取所有该用户的设备的接口
      */
     function getUserEquipments(){
-        $userEquipments = UserEquipments::all();
-        return  response()->json(['message' => 'success！.', 'status_code' => 200, 'data' => $userEquipments]);
-
+        if (\Auth::guard('api')->check()) {
+            $uid = \Auth::guard('api')->user()->id;
+            $userEquipments = UserEquipments::where('uid',$uid)->orderBy('id','desc')->get();
+            return  response()->json(['message' => 'success！.', 'status_code' => 200, 'data' => $userEquipments]);
+        }else
+            return response()->json(['message' => 'token失效请重新登录.', 'status_code' => 400, 'data' => null]);
     }
 
     /*
@@ -178,7 +181,7 @@ class LoginController extends ApiController
 
         if (\Auth::guard('api')->check()) {
             $uid = \Auth::guard('api')->user()->id;
-            $is_bind = \App\UserEquipments::where('uid',$uid)->where('serial_num',$serial_num)->count();
+            $is_bind = UserEquipments::where('uid',$uid)->where('serial_num',$serial_num)->count();
             if($is_bind){
                 return response()->json(['message' => '这个设备已经和您绑定过啦！', 'status_code' => 300, 'data' => null]);
             }
@@ -237,13 +240,13 @@ class LoginController extends ApiController
 
         if (\Auth::guard('api')->check()) {
             $uid = \Auth::guard('api')->user()->id;
-            $is_bind = \App\UserEquipments::where('uid',$uid)->where('serial_num',$serial_num)->count();
+            $is_bind = UserEquipments::where('uid',$uid)->where('serial_num',$serial_num)->count();
             if(!$is_bind)
                 return response()->json(['message' => '未查询到该设备！', 'status_code' => 300, 'data' => null]);
 
             $uid = \Auth::guard('api')->user()->id;
 //            return ['serial_num'=>$serial_num,'name'=>$name,'wavelength'=>$wavelength,'dbm'=>$dbm,'ref'=>$ref,'mode'=>$mode,'uid'=>$uid];
-            \App\OpticalPowerMeter::create(['serial_num'=>$serial_num,'name'=>$name,'wavelength'=>$wavelength,'dbm'=>$dbm,'ref'=>$ref,'mode'=>$mode,'uid'=>$uid]);
+            OpticalPowerMeter::create(['serial_num'=>$serial_num,'name'=>$name,'wavelength'=>$wavelength,'dbm'=>$dbm,'ref'=>$ref,'mode'=>$mode,'uid'=>$uid]);
             return response()->json(['message' => '保存成功！.', 'status_code' => 200, 'data' => null]);
         }else
             return response()->json(['message' => 'token失效请重新登录.', 'status_code' => 400, 'data' => null]);
